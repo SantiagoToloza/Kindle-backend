@@ -1,0 +1,22 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Kindle Reader</title>
+</head>
+<body>
+<h1>Kindle Reader</h1>
+<p>{{ articles|length }} articulo(s) por leer</p>
+<hr>
+{% if articles %}
+{% for article in articles %}
+<p>
+<a href="/kindle/{{ article.id }}">{{ article.title }}</a><br>
+<small>{{ article.site_name or (article.url | urlhost) }} - {{ article.created_at | datetimeformat }}</small>
+</p>
+<hr>
+{% endfor %}
+{% else %}
+<p>No hay articulos pendientes.</p>
+{% endif %}
+</body>
+</html>
