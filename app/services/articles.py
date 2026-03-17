@@ -36,13 +36,13 @@ class ArticleService:
         return article
 
     async def mark_as_read(self, db: AsyncSession, article_id: int) -> Article | None:
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         article = await self.get_by_id(db, article_id)
         if not article:
             return None
         article.is_read = True
-        article.read_at = datetime.now(timezone.utc)
+        article.read_at = datetime.utcnow()
         await db.commit()
         await db.refresh(article)
         return article
