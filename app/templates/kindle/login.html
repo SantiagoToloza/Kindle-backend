@@ -10,16 +10,27 @@
             font-size: 18px;
             color: #000;
             background: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .outer {
+            display: table;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .middle {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
             padding: 16px;
-            box-sizing: border-box;
         }
 
         .card {
+            display: inline-block;
             width: 100%;
             max-width: 360px;
             text-align: center;
@@ -73,6 +84,8 @@
     </style>
 </head>
 <body>
+    <div class="outer">
+    <div class="middle">
     <div class="card">
         <h2>Introduce el código</h2>
         <form method="POST" action="/kindle/login" id="loginForm">
@@ -94,6 +107,8 @@
         {% if error %}
         <p class="error">{{ error }}</p>
         {% endif %}
+    </div>
+    </div>
     </div>
 
     <script>

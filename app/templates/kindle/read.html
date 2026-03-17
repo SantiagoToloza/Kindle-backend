@@ -21,7 +21,9 @@
             margin-bottom: 1.5em;
         }
 
-        .nav a {
+        .nav a,
+        .nav a:link,
+        .nav a:visited {
             color: #333;
             text-decoration: none;
             border-bottom: 1px solid #999;
@@ -67,7 +69,9 @@
             margin-bottom: 1.2em;
         }
 
-        .content a {
+        .content a,
+        .content a:link,
+        .content a:visited {
             color: #000;
         }
 
@@ -127,7 +131,9 @@
             font-size: 0.9em;
         }
 
-        .back-link {
+        .back-link,
+        .back-link:link,
+        .back-link:visited {
             display: block;
             margin-top: 1.5em;
             font-size: 0.85em;
@@ -141,13 +147,24 @@
         /* Paginacion tipo EPUB */
         html, body {
             overflow: hidden;
-            scrollbar-width: none;
-        }
-        html::-webkit-scrollbar {
-            display: none;
+            height: 100%;
+            margin: 0;
         }
         body {
-            padding-bottom: 36px;
+            padding: 0;
+        }
+        #pg-wrap {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 36px;
+            overflow: hidden;
+        }
+        #pg-inner {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 20px 16px 20px;
         }
         #pg {
             position: fixed;
@@ -164,46 +181,56 @@
     </style>
 </head>
 <body>
-    <p class="nav"><a href="/kindle">&larr; Volver a la lista</a></p>
+    <div id="pg-wrap">
+        <div id="pg-inner">
+            <p class="nav"><a href="/kindle">&larr; Volver a la lista</a></p>
 
-    <h1>{{ article.title }}</h1>
+            <h1>{{ article.title }}</h1>
 
-    <p class="meta">
-        {{ article.site_name or (article.url | urlhost) }}
-        {% if article.author %} &middot; {{ article.author }}{% endif %}
-        &middot; {{ article.created_at | datetimeformat }}
-    </p>
+            <p class="meta">
+                {{ article.site_name or (article.url | urlhost) }}
+                {% if article.author %} &middot; {{ article.author }}{% endif %}
+                &middot; {{ article.created_at | datetimeformat }}
+            </p>
 
-    <hr>
+            <hr>
 
-    <div class="content">
-        {{ content_html | safe }}
-    </div>
+            <div class="content">
+                {{ content_html | safe }}
+            </div>
 
-    <div class="read-section">
-        {% if article.is_read %}
-            <span class="read-badge">Ya leido</span>
-        {% else %}
-            <form method="post" action="/kindle/{{ article.id }}/read">
-                <button class="btn-read" type="submit">Marcar como leido</button>
-            </form>
-        {% endif %}
-        <a class="back-link" href="/kindle">&larr; Volver a la lista</a>
+            <div class="read-section">
+                {% if article.is_read %}
+                    <span class="read-badge">Ya leido</span>
+                {% else %}
+                    <form method="post" action="/kindle/{{ article.id }}/read">
+                        <button class="btn-read" type="submit">Marcar como leido</button>
+                    </form>
+                {% endif %}
+                <a class="back-link" href="/kindle">&larr; Volver a la lista</a>
+            </div>
+        </div>
     </div>
     <div id="pg"></div>
 
     <script>
-        var vh = window.innerHeight;
+        var wrap = document.getElementById('pg-wrap');
+        var inner = document.getElementById('pg-inner');
         var currentPage = 0;
 
+        function pageHeight() {
+            return wrap.clientHeight;
+        }
+
         function totalPages() {
-            return Math.ceil(document.body.scrollHeight / vh);
+            return Math.max(1, Math.ceil(inner.scrollHeight / pageHeight()));
         }
 
         function goToPage(n) {
+            var ph = pageHeight();
             var total = totalPages();
             currentPage = Math.max(0, Math.min(n, total - 1));
-            window.scrollTo({ top: currentPage * vh, behavior: 'instant' });
+            inner.style.transform = 'translateY(-' + (currentPage * ph) + 'px)';
             document.getElementById('pg').textContent = (currentPage + 1) + ' / ' + total;
         }
 
