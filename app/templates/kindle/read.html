@@ -267,15 +267,18 @@
             var pageW   = 0;  // ancho de una "página" (column + gap)
 
             function measure() {
-                // El ancho de cada columna = ancho del reader
                 var rw = reader.clientWidth;
                 var gap = 48;
 
-                // Seteamos column-width exacto al viewport del reader
-                col.style.columnWidth = rw + 'px';
+                // Descuentar padding izquierdo+derecho de #columns para que
+                // el translateX quede alineado con el borde del contenido
+                var style = window.getComputedStyle(col);
+                var padH = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+                var contentW = rw - padH;
 
-                // Ancho total del contenido columnarizado
-                pageW = rw + gap;
+                col.style.columnWidth = contentW + 'px';
+
+                pageW = contentW + gap;
                 total = Math.max(1, Math.round(col.scrollWidth / pageW));
 
                 // Si la pagina actual quedo fuera de rango, ajustar
